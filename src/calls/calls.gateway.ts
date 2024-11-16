@@ -1,11 +1,14 @@
+import { ConfigService } from '@nestjs/config';
 import {
   WebSocketGateway,
   WebSocketServer,
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { UserService } from 'src/users/users.service';
 
 type Common = {
   Id: string,
@@ -25,24 +28,30 @@ type ClientData = {
 }
 
 @WebSocketGateway(90, { cors: true })
-export class CallsGateway {
+export class CallsGateway implements OnGatewayDisconnect {
+  constructor(private userService: UserService){
+  }
 
   queue: Queue = new Map()
+  pool: Pool = new Map()
   @WebSocketServer()
   server: Server;
 
+  decodeJWT(jwt: string){
+    return this.userService.validateJWT(jwt)
+  }
 
   @SubscribeMessage('entered')
-  async handleClientCall(@MessageBody() data: ClientData, @ConnectedSocket() client: Socket) {
-    // Notify all available operators about the new call
-    console.log(data)
+  async handleClientCall(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
+    const {token, id} = JSON.parse(data)
+    const user = this.decodeJWT(token)
+
   }
 
-  @SubscribeMessage('accept-call')
-  async handleAcceptCall(@MessageBody() data: any, @ConnectedSocket() operator: Socket) {
-    // Notify the client about the accepted call
-    this.server.to(data.clientId).emit('call-accepted', { operatorId: operator.id });
+  handleDisconnect(client: any) {
+    console.log("dis")
   }
+
 
 
 }

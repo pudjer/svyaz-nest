@@ -37,6 +37,11 @@ export class UserService {
         const res = await createdUserDTO.save();
         return res;
     }
+
+    validateJWT(jwt: string): UserSelfDTO {
+        this.jwtService.verify(jwt)
+        return this.jwtService.decode(jwt)
+    }
     
     validateAndGetUser<T, J>(cred: T, options?: {password: J}): T extends Credentials ? Promise<UserModel> : T extends { username: string } ? J extends false ? Promise<UserModel> : never : never
     async validateAndGetUser(toValidate: {username: string, password?: string, _id?: string}, options?: {password: boolean}){
