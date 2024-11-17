@@ -70,7 +70,7 @@ export class CallsGateway implements OnGatewayDisconnect {
   async handleClientCall(@MessageBody() data: ClientData, @ConnectedSocket() socket: Socket) {
     const {token, offer} = data
     const user = this.decodeJWT(token)
-    if(user.isAdmin){
+    if(user.isOperator){
       const operator: Common = {
         id: user._id,
         offer: offer,

@@ -37,6 +37,11 @@ export class User{
     @Prop({ type: Boolean, default: false })
     isAdmin: boolean
 
+    @ApiProperty({type: Boolean})
+    @IsBoolean()
+    @Prop({ type: Boolean, default: false })
+    isOperator: boolean
+
     @ApiProperty({type: Date})
     @Prop({ type: Date, default: () => new Date() })
     @IsISO8601()
@@ -84,6 +89,10 @@ export class UserAdminCreateDTO extends IntersectionType(
     UserCreateDTO,
     OmitType(User, ['hashedPassword', '_id'])
 ) {}
+export class UserAdminDTO extends OmitType(UserAdminCreateDTO, ["password"]){
+    @ApiProperty({ type: String })
+    _id: string
+}
 
 export class UserLoginDTO extends PickType(
     UserCreateDTO,

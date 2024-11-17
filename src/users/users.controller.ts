@@ -36,8 +36,10 @@ export class UserController {
   
 
 
+
+
   @ApiResponse({type: User})
-  @Post("admin")
+  @Get("admin")
   @AdminRequired
   async adminCreate(@Body() user: UserAdminCreateDTO): Promise<User> {    
     return await this.userService.register(user);
@@ -51,12 +53,6 @@ export class UserController {
     return await this.userService.validateAndGetUser(user, { password: false })
   }
 
-  @ApiNoContentResponse()
-  @AuthRequired
-  @Delete()
-  async delete(@UserParamDecorator() user: UserModel) {
-    await user.deleteOne()
-  }
 
   @ApiResponse({ type: UserSelfDTO })
   @AuthRequired

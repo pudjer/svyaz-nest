@@ -8,6 +8,7 @@ import { UserController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserScheme } from './models/User';
 import { UserService } from './users.service';
+import { AdminController } from './admin.controller';
 @Module({
   imports: [
     PassportModule,
@@ -23,7 +24,7 @@ import { UserService } from './users.service';
     ]),
   ],
   providers: [LocalStrategy, JwtStrategy, UserService],
-  controllers: [UserController],
+  controllers: [UserController, AdminController],
   exports: [UserService]
 })
 export class UserModule {}
