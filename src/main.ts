@@ -23,11 +23,9 @@ async function bootstrap() {
   try{
     const admin = new UserAdminCreateDTO()
     admin.blocked = false;
-    admin.date_registered = new Date()
     admin.isAdmin = true;
     admin.password = "admin"
     admin.username = "admin"
-    admin.valid_since = new Date()
 
     await userService.register(admin)
   }catch(e){

@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common/decorators";
 import { ApiNoContentResponse, ApiResponse } from "@nestjs/swagger";
 import { AdminRequired } from "./admin/AdminDecorator";
-import { User, UserAdminCreateDTO, UserAdminDTO, UserCreateDTO } from "./models/User";
+import { User, UserAdminChangeDTO, UserAdminCreateDTO, UserAdminDTO, UserCreateDTO } from "./models/User";
 import { UserService } from "./users.service";
 
-@Controller('user')
+@Controller('admin')
 export class AdminController {
   constructor(
     private userService: UserService,
@@ -35,8 +35,15 @@ export class AdminController {
   @ApiResponse({ type: UserAdminDTO })
   @AdminRequired
   @Patch("user/:id")
-  async change(@Param("id") id: string, @Body() toChange: UserCreateDTO) {
+  async change(@Param("id") id: string, @Body() toChange: UserAdminChangeDTO) {
     return await this.userService.change(id, toChange)
+  }
+
+  @ApiResponse({type: UserAdminDTO})
+  @AdminRequired
+  @Get("user/username/:username")
+  async getByUsername(@Param("username") username: string): Promise<UserAdminDTO> {    
+    return await this.userService.findByUsername(username);
   }
 
 }

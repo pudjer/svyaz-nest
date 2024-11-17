@@ -76,7 +76,7 @@ export class UserCreateDTO extends PickType(
     ['username','email'] as const
     ) {
 
-    @IsStrongPassword()
+    @MinLength(8)
     @ApiProperty({ type: String})
     @IsString()
     @MaxLength(200)
@@ -87,8 +87,10 @@ export class UserCreateDTO extends PickType(
 export class UserChangeDTO extends PartialType(UserCreateDTO){}
 export class UserAdminCreateDTO extends IntersectionType(
     UserCreateDTO,
-    OmitType(User, ['hashedPassword', '_id'])
+    PickType(User, ["blocked", "isAdmin", "isOperator"])
 ) {}
+export class UserAdminChangeDTO extends PartialType(UserAdminCreateDTO){}
+
 export class UserAdminDTO extends OmitType(UserAdminCreateDTO, ["password"]){
     @ApiProperty({ type: String })
     _id: string

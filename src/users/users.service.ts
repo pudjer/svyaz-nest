@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {UserCreateDTO, User, UserHashedDTO, UserModel, UserAdminCreateDTO, UserSelfDTO, UserChangeDTO} from "./models/User";
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -28,7 +28,7 @@ export class UserService {
     }
     async findByUsername(username: string){
         const res = await this.userModel.findOne({ username }).exec();
-        if (!res) throw new UnauthorizedException()
+        if (!res) throw new NotFoundException()
         return res
     }
 
@@ -45,8 +45,12 @@ export class UserService {
     
     validateAndGetUser<T, J>(cred: T, options?: {password: J}): T extends Credentials ? Promise<UserModel> : T extends { username: string } ? J extends false ? Promise<UserModel> : never : never
     async validateAndGetUser(toValidate: {username: string, password?: string, _id?: string}, options?: {password: boolean}){
-        
-        const user = toValidate._id ? await this.getUserById(toValidate._id) : await this.findByUsername(toValidate.username);
+        let user
+        try {
+            user = toValidate._id ? await this.getUserById(toValidate._id) : await this.findByUsername(toValidate.username);
+        }catch(e){
+            throw new UnauthorizedException()
+        }
         if(options?.password){
             if (!await bcrypt.compare(toValidate.password, user.hashedPassword)) {
                throw new UnauthorizedException() 
@@ -83,10 +87,14 @@ export class UserService {
         return user
     }
     async getToken(user: User): Promise<AccessToken> {
-        const userf = (await this.findByUsername(user.username)).toObject()
-        const toCookie = striper(privateAttributesWithoutPassword)(userf)
-        return {
-            access_token: this.jwtService.sign(toCookie, { expiresIn: this.accessExpTime })
+        try{
+            const userf = (await this.findByUsername(user.username)).toObject()
+            const toCookie = striper(privateAttributesWithoutPassword)(userf)
+            return {
+                access_token: this.jwtService.sign(toCookie, { expiresIn: this.accessExpTime })
+            }
+        }catch(e){
+            throw new UnauthorizedException()
         }
     }
 
