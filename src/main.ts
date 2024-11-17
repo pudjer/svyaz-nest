@@ -11,12 +11,13 @@ async function bootstrap() {
   app.enableCors({
     credentials: true, // Allow credentials (e.g., cookies)
     allowedHeaders: '*',
+    origin: "*"
   });
   const configService = app.get(ConfigService);
   const port = configService.get('PORT')
   const config = new DocumentBuilder().build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
   await app.listen(port);
 
   const userService = app.get(UserService);
