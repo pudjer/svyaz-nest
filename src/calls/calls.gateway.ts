@@ -27,7 +27,7 @@ type ClientData = {
   offer: string
 }
 
-@WebSocketGateway(90, { cors: true })
+@WebSocketGateway(9000, { cors: true })
 export class CallsGateway implements OnGatewayDisconnect {
   constructor(private userService: UserService){
   }
