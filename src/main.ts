@@ -4,9 +4,17 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { UserService } from './users/users.service';
-import { UserAdminCreateDTO, UserCreateDTO } from './users/models/User';
+import { UserAdminCreateDTO } from './users/models/User';
+import * as fs from 'fs';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const httpsOptions = {
+    key: fs.readFileSync('../../ssl/server.key'),
+    cert: fs.readFileSync('../../ssl/server.cert'),
+  };
+
+  const app = await NestFactory.create(AppModule, { httpsOptions });
+
   app.use(helmet());
   app.enableCors({
     credentials: true, // Allow credentials (e.g., cookies)

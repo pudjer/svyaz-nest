@@ -13,5 +13,4 @@ export const validationSchema = Joi.object({
     JWT_REFRESH_EXPIRATION_TIME: [Joi.number(), Joi.string().regex(/^\d+( days|d|h| hrs|m|s|y)?$/)],
     MONGO_USERNAME: Joi.string(),
     MONGO_PASSWORD: Joi.string(),
-    HOST: Joi.string().default("http://localhost:5173")
 })
