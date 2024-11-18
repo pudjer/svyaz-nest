@@ -111,6 +111,7 @@ export class CallsGateway implements OnGatewayDisconnect {
   
     socket1.on('disconnect', () => {
       socket2.disconnect()
+      this.handleDisconnect(socket2)
     });
   
   }
