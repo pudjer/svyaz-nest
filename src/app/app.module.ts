@@ -17,9 +17,6 @@ import { CallsModule } from 'src/calls/calls.module';
       cache: true,
       validationSchema: validationSchema
     }),
-    DevtoolsModule.register({
-      http: process.env.NODE_ENV !== 'production',
-    }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: getMongoConfig
